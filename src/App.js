@@ -1,25 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import BandsList from './component/BandsList'
+import ModalDialog from './component/ModalDialog'
+import Navbar from './component/Navbar'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    bands: [],
+    currentBand: {},
+    show: false,
+  }
+
+  changeCurrentBand = (band) => {
+    this.setState({ currentBand: band })
+    this.handleShow()
+  }
+
+  handleClose = () => {
+    this.setState({ show: false })
+  }
+
+  handleShow = () => {
+    this.setState({ show: true })
+  }
+
+  componentDidMount() {
+    fetch(
+      'https://raw.githubusercontent.com/Danilovesovic/bands/master/bands_with_id.json'
+    )
+      .then((res) => res.json())
+      .then((data) => this.setState({ bands: data }))
+  }
+
+  render() {
+    return (
+      <React.StrictMode>
+        <Navbar />
+        <BandsList
+          bands={this.state.bands}
+          changeCurrentBand={this.changeCurrentBand}
+        />
+        <ModalDialog
+          show={this.state.show}
+          handleClose={this.handleClose}
+          currentBand={this.state.currentBand}
+        />
+      </React.StrictMode>
+    )
+  }
 }
 
-export default App;
+export default App
